@@ -1,22 +1,25 @@
 const express = require("express");
-const app = express();
+const server = express();
 const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({ app });
+const port = 8080;
 
-app.get("/", (req, res) => {
+server.listen(port, () => {
+  console.log(`\n***Listening on port ${port}***\n`);
+});
+
+const wss = new WebSocket.Server({ port: 3030 });
+
+server.get("/", (req, res) => {
   res.send("it's online");
 });
 
-wss.on("connection", ws => {
-  ws.on("message", message => {
-    console.log(`Recieved ${message}`);
+wss.on("connection", function connection(ws) {
+  ws.on("message", function incoming(data) {
+    wss.clients.forEach(function each(client) {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
   });
-
-  ws.send("something");
-});
-
-const port = 8080;
-app.listen(port, () => {
-  console.log(`\n***Listening on port ${port}***\n`);
 });
