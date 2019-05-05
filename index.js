@@ -14,18 +14,28 @@ server.get("/", (req, res) => {
   res.send("it's online");
 });
 
-let clientID;
-
 wss.on("connection", function connection(ws, req) {
   console.log("Connecting");
-  console.log(req.url);
   ws.on("message", function incoming(data) {
-    if (typeof data === Number) {
-      clientID = data;
+    console.log(`Data is type: ${typeof data}`);
+    if (data.includes("poop")) {
+      console.log(parseInt(data));
+      ws.id = parseInt(data);
+      console.log(ws.id);
     } else {
-      wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(data);
+      const dataCopy = data;
+      const friendID = JSON.parse(dataCopy).friendID;
+      wss.clients.forEach(function each(friend) {
+        if (
+          friend !== ws &&
+          friend.readyState === WebSocket.OPEN &&
+          parseInt(friend.id) == parseInt(friendID)
+        ) {
+          console.log("Sending");
+          console.log("FRIEND ID:   ", friend.id);
+          console.log("MY ID -------", ws.id);
+          console.log("this should work: ", friendID);
+          friend.send(data);
         }
       });
     }
