@@ -17,8 +17,9 @@ server.get("/", (req, res) => {
 wss.on("connection", function connection(ws, req) {
   console.log("Connecting");
   ws.on("message", function incoming(data) {
-    console.log(`Data is type: ${typeof data}`);
-    if (data.includes("poop")) {
+    // "unirvkau" is the secret word at the end of every
+    // user_id.
+    if (data.includes("unirvkau")) {
       console.log(parseInt(data));
       ws.id = parseInt(data);
       console.log(ws.id);
