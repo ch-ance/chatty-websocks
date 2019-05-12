@@ -30,8 +30,8 @@ wss.on("connection", function connection(ws, req) {
       wss.clients.forEach(function each(friend) {
         if (
           // friend !== ws &&
-          friend.readyState === WebSocket.OPEN &&
-          parseInt(friend.id) == parseInt(friendID)
+          friend.readyState === WebSocket.OPEN
+          // parseInt(friend.id) == parseInt(friendID)
         ) {
           console.log("FRIEND ID:   ", friend.id);
           console.log("MY ID -------", ws.id);
