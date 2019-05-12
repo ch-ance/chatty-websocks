@@ -29,11 +29,12 @@ wss.on("connection", function connection(ws, req) {
       const friendID = dataObject.friendID;
       wss.clients.forEach(function each(friend) {
         if (
-          // friend !== ws &&
-          friend.readyState === WebSocket.OPEN
-          // parseInt(friend.id) == parseInt(friendID)
+          friend !== ws &&
+          friend.readyState === WebSocket.OPEN &&
+          friend.id === friendID
         ) {
           console.log("FRIEND ID:   ", friend.id);
+          console.log("friendID: ", friendID);
           console.log("MY ID -------", ws.id);
           friend.send(data);
         }
