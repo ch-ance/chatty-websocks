@@ -9,11 +9,11 @@ const port = process.env.PORT || 3040;
 // these ports are differnet. Need to get ws working with express
 server.use(cors());
 
-server.listen(port, () => {
+const app = server.listen(port, () => {
   console.log(`\n***Listening on port ${port}***\n`);
 });
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ app });
 
 server.get("/", (req, res) => {
   res.send("it's online");
