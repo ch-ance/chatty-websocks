@@ -1,11 +1,13 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const server = express();
 const WebSocket = require("ws");
 
-const port = process.env.PORT || 3030;
+const port = process.env.PORT || 3040;
 
 // these ports are differnet. Need to get ws working with express
+server.use(cors());
 
 server.listen(port, () => {
   console.log(`\n***Listening on port ${port}***\n`);
