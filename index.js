@@ -29,12 +29,8 @@ wss.on('connection', function connection(ws, req) {
             // for now, else just means that the message is a chat message and not meant to set the user's ID
             const friendID = dataObject.friendID
             wss.clients.forEach(function each(friend) {
-                console.log('a message is being transmitted')
-                console.log('Friend = ws? :', friend === ws)
-                // console.log('WS: ', ws)
-                console.log('READY STATE: ', friend.readyState)
-                console.log('friend.id: ', friend.id)
-                console.log('friendID: ', friendID)
+                console.log(friend.id)
+                console.log(ws.id)
                 if (
                     friend !== ws &&
                     friend.readyState === 1 &&
