@@ -23,7 +23,7 @@ wss.on('connection', function connection(ws, req) {
         // if message sent is a userIDMessage, meaning it's sent to set the user ID
         const dataObject = JSON.parse(data)
         if (dataObject.identifier) {
-            ws.id = dataObject.userID
+            ws.id = dataObject.username
             console.log(ws.id)
         } else {
             // for now, else just means that the message is a chat message and not meant to set the user's ID
