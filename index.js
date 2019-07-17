@@ -25,6 +25,15 @@ wss.on('connection', function connection(ws, req) {
         if (dataObject.identifier) {
             ws.id = dataObject.username
             console.log(ws.id)
+        }
+        // if packet is a SENDING CONTACT REQUEST
+        else if (dataObject.sendingContactRequest) {
+            const friendID = dataObject.friendID
+            wss.clients.forEach(contact => {
+                if (contact.id === friendID) {
+                    console.table(data)
+                }
+            })
         } else {
             // for now, else just means that the message is a chat message and not meant to set the user's ID
             const friendID = dataObject.friendID
