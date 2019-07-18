@@ -22,7 +22,9 @@ wss.on('connection', function connection(ws, req) {
     ws.on('message', function incoming(data) {
         // if message sent is a userIDMessage, meaning it's sent to set the user ID
         const dataObject = JSON.parse(data)
+        console.table(dataObject)
         if (dataObject.identifier) {
+            console.log('setting id', dataObject)
             ws.id = dataObject.username
             console.log(ws.id)
         }
@@ -32,6 +34,21 @@ wss.on('connection', function connection(ws, req) {
             wss.clients.forEach(contact => {
                 if (contact.id === friendID) {
                     console.table(data)
+                }
+            })
+        }
+        // if packet is checking for online contacts
+        else if (dataObject.statusCheck) {
+            const contactIDs = dataObject.contactIDs
+            wss.clients.forEach(contact => {
+                console.log('hey contact, ', contactIDs)
+                if (
+                    contactIDs.indexOf(contact.id !== -1) &&
+                    contact.id !== ws.id
+                ) {
+                    console.log('CONTACT !!!!: ', contact.id)
+                    console.log('WS ID: ', ws.id)
+                    contact.send(data)
                 }
             })
         } else {
