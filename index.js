@@ -44,7 +44,8 @@ wss.on('connection', function connection(ws, req) {
                 console.log('hey contact, ', contactIDs)
                 if (
                     contactIDs.indexOf(contact.id !== -1) &&
-                    contact.id !== ws.id
+                    contact.id !== ws.id &&
+                    dataObject.online
                 ) {
                     console.log(`${contact.id} is online`)
                     onlineContacts.push(contact.id)
