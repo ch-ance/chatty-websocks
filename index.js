@@ -22,7 +22,6 @@ wss.on('connection', function connection(ws, req) {
     ws.on('message', function incoming(data) {
         // if message sent is a userIDMessage, meaning it's sent to set the user ID
         const dataObject = JSON.parse(data)
-        console.table(dataObject)
         if (dataObject.identifier) {
             console.log('setting id', dataObject)
             ws.id = dataObject.username
@@ -33,38 +32,45 @@ wss.on('connection', function connection(ws, req) {
             const friendID = dataObject.friendID
             wss.clients.forEach(contact => {
                 if (contact.id === friendID) {
-                    console.table(data)
+                    // console.table(data)
                 }
             })
         }
         // if packet is checking for online contacts
         else if (dataObject.statusCheck) {
             const contactIDs = dataObject.contactIDs
+            const onlineContacts = []
             wss.clients.forEach(contact => {
                 console.log('hey contact, ', contactIDs)
                 if (
                     contactIDs.indexOf(contact.id !== -1) &&
                     contact.id !== ws.id
                 ) {
-                    console.log('CONTACT !!!!: ', contact.id)
-                    console.log('WS ID: ', ws.id)
-                    contact.send(data)
+                    console.log(`${contact.id} is online`)
+                    onlineContacts.push(contact.id)
                 }
             })
+            // send the client the list of online contacts
+            const onlineStatusMessageToClient = {
+                updatingOnlineStatus: true,
+                onlineContacts,
+            }
+            wss.clients.forEach(contact => {
+                if (contact.id === ws.id) {
+                    console.log('Sending it: ', onlineStatusMessageToClient)
+                    ws.send(JSON.stringify(onlineStatusMessageToClient))
+                }
+            })
+            console.log('Online contacts: ', onlineContacts)
         } else {
             // for now, else just means that the message is a chat message and not meant to set the user's ID
             const friendID = dataObject.friendID
             wss.clients.forEach(function each(friend) {
-                console.log(friend.id)
-                console.log(ws.id)
                 if (
                     friend !== ws &&
                     friend.readyState === 1 &&
                     friend.id === friendID
                 ) {
-                    console.log('FRIEND ID:   ', friend.id)
-                    console.log('friendID: ', friendID)
-                    console.log('MY ID -------', ws.id)
                     friend.send(data)
                 }
             })
