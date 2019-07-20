@@ -47,8 +47,13 @@ wss.on('connection', function connection(ws, req) {
                     contact.id !== ws.id &&
                     dataObject.online
                 ) {
-                    console.log(`${contact.id} is online`)
+                    console.log('incoming: ', dataObject)
                     onlineContacts.push(contact.id)
+                    const message = {
+                        userIsOnline: true,
+                        user: ws.id,
+                    }
+                    ws.send(JSON.stringify(message))
                 }
             })
             // send the client the list of online contacts
@@ -62,7 +67,6 @@ wss.on('connection', function connection(ws, req) {
                     ws.send(JSON.stringify(onlineStatusMessageToClient))
                 }
             })
-            console.log('Online contacts: ', onlineContacts)
         } else {
             // for now, else just means that the message is a chat message and not meant to set the user's ID
             const friendID = dataObject.friendID
