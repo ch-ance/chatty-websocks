@@ -36,6 +36,26 @@ wss.on('connection', function connection(ws, req) {
                 }
             })
         }
+        // if packet is accepting a contact request
+        else if (dataObject.acceptingRequest) {
+            const contact = dataObject.contact
+            const user = dataObject.user
+            wss.clients.forEach(client => {
+                console.log('accepting request: ', contact, user)
+                if (client.id === contact && client.id !== ws.id) {
+                    console.log('HERE MOTHER FUCKER')
+                    console.log('CLIENT ID: ', client.id)
+                    console.log('USER: ', user)
+                    ws.send(
+                        JSON.stringify({
+                            contactRequestAccepted: true,
+                            user,
+                            contact,
+                        }),
+                    )
+                }
+            })
+        }
         // if packet is checking for online contacts
         else if (dataObject.statusCheck) {
             const contactIDs = dataObject.contactIDs
@@ -67,16 +87,29 @@ wss.on('connection', function connection(ws, req) {
                     ws.send(JSON.stringify(onlineStatusMessageToClient))
                 }
             })
-        } else {
+        }
+
+        // type: 'Accepting Contact Request',
+        // acceptingUser: localStorage.getItem(
+        //     'username',
+        // ),
+        // requestingUser: from,
+        else if (dataObject.type === 'Accepting Contact Request') {
+            console.table(dataObject)
+        } else if (dataObject.type === 'Private Message') {
             // for now, else just means that the message is a chat message and not meant to set the user's ID
-            const friendID = dataObject.friendID
-            wss.clients.forEach(function each(friend) {
+            const receivingUser = dataObject.receivingUser
+            console.table(dataObject)
+            wss.clients.forEach(function each(contact) {
                 if (
-                    friend !== ws &&
-                    friend.readyState === 1 &&
-                    friend.id === friendID
+                    contact !== ws &&
+                    contact.readyState === 1 &&
+                    contact.id === receivingUser
+                    // friend.id === friendID
                 ) {
-                    friend.send(data)
+                    console.log('DATA: ', data)
+                    console.log('CONTACT: ', contact.id)
+                    contact.send(data)
                 }
             })
         }
