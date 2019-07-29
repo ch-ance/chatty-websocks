@@ -72,7 +72,20 @@ wss.on('connection', function connection(ws, req) {
         //                        'username',
         //                            ),
         //         requestingUser: from,
-        else if (dataObject.type === 'Accepting Contact Request') {
+        else if (dataObject.type === 'Sending Contact Request') {
+            console.table(dataObject)
+            const acceptingUser = dataObject.acceptingUser
+            wss.clients.forEach(function each(contact) {
+                if (
+                    contact !== ws &&
+                    contact.readyState === 1 &&
+                    contact.id === acceptingUser
+                ) {
+                    console.log('Sending request to: ', contact.id)
+                    contact.send(data)
+                }
+            })
+        } else if (dataObject.type === 'Accepting Contact Request') {
             console.table(dataObject)
             const requestingUser = dataObject.requestingUser
             wss.clients.forEach(function each(contact) {
